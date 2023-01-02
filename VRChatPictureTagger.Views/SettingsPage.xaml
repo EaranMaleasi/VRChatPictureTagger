@@ -1,0 +1,19 @@
+<Page
+    x:Class="VRChatPictureTagger.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VRChatPictureTagger.Views"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Margin="0,50,0,0">
+        <TextBlock Text="Additional search paths:" />
+        <ListBox
+            Height="300"
+            ItemsSource="{Binding SearchFolders}"
+            SelectedItem="{Binding SelectedSearchPath}" />
+        <Button Command="{Binding AddSearchPathCommand}" Content="Add new Path" />
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Don't search VRChat folder:" />
+            <ToggleSwitch IsOn="{Binding DontSearchVrcFolder}" />
+        </StackPanel>
+    </StackPanel>
+</Page>
