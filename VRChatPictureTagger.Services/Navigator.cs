@@ -61,6 +61,7 @@ namespace VRChatPictureTagger.Services
 		{
 			try
 			{
+				_logger.LogInformation($"Navigating to: {viewType}");
 				_currentViewModel?.NavigatedFrom();
 
 				_navigationFrame.Navigate(viewType);

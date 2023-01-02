@@ -18,6 +18,10 @@
       <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
       <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
       <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+      <PackageReference Include="CommunityToolkit.WinUI.Notifications" Version="7.1.2" />
+      <PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
+      <PackageReference Include="CommunityToolkit.WinUI.UI.Behaviors" Version="7.1.2" />
+      <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Input" Version="7.1.2" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />

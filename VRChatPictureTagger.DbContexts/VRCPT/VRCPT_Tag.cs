@@ -6,6 +6,7 @@ namespace VRChatPictureTagger.DbContexts.VRCPT
 {
 	public class VRCPT_Tag
 	{
+		public string ID { get; set; }
 		public string Name { get; set; }
 		public TagType Type { get; set; }
 		public Color[] TagColor { get; set; }
