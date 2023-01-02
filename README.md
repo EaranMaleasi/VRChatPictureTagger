@@ -4,7 +4,7 @@ The VRChat Picture Tagger is a small application aiming to provide the answer to
 
 It tries to give possible answers by looking through a **VRCX** database and match the time of the screenshot, with the people that were in the instance the picture was taken in. 
 
-##Planned Features:
+## Planned Features:  
 - Auto-Tag pictures with people that were in the instance the moment the picture was taken
 - Auto-Tag pictures with the world that it was taken in.
 - Tag editor to remove/add tags form pictures and to give tags custom colors.
@@ -15,7 +15,7 @@ It tries to give possible answers by looking through a **VRCX** database and mat
 - auto-filter people tags on a screenshot using image recognition based on machine learning
 - installer/updater
 
-##Disclaimer
+## Disclaimer  
 This project is mainly a way for me to get into things like:
 - [.NET 6](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6).   
 - [.NET Hosting](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
