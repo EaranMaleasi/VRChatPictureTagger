@@ -16,9 +16,10 @@ It tries to give possible answers by looking through a **VRCX** database and mat
 - installer/updater
 
 ## Disclaimer  
+### About this project
 This project is mainly a way for me to get into things like:
 - [.NET 6](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6).   
-- [.NET Hosting](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
+- [.NET Hosting and extensions](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
 - [Serilog](https://serilog.net/)
 - [Dependency Injection](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)
 - [Loose coupling](https://stackoverflow.com/a/37993102)
@@ -28,10 +29,14 @@ This project is mainly a way for me to get into things like:
 
 While I have already worked with most of these patterns, libraries and frameworks in my 10+ years as professional C# dev, it was mainly in an extending fashion, only adding to existing projects where architecture had already been set. This is a fresh start, a way for me to learn what works, and what doesn't, for me to fiddle and tinker around with stuff without the time pressure of a client waiting for things to be done.
 
+### About VRCX
+I have no ties whatsoever to the VRCX project and/or team.  
+VRCX is an absolutely awesome product that I use daily even if I'm not on VRChat and can wholeheartedly recommend it.  
+You can get VRCX in this [GitHub Repository](https://github.com/vrcx-team/VRCX)
+
 ## Requirements
 - **Windows 10** 1809 or newer. **Windows 11**
-- **.NET 6 Runtime** needs to be installed for this to run.
-  - Download for [32-Bit (x86)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.12-windows-x64-installer) 
-  - Download for [64-Bit (x64)]()
-- **VRCX** has to be installed 
-  - a `VRCX.sqlite3` database needs to be at `%APPDATA%\VRCX\VRCX.sqlite3`).
+- **.NET 6 Desktop Runtime** needs to be installed for this to run.
+  - [Download](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- **VRCX**
+  - a `VRCX.sqlite3` database needs to be at `%APPDATA%\VRCX\VRCX.sqlite3`)
