@@ -7,60 +7,42 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:VRChatPictureTagger.Views.Behaviours"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interaction="using:Microsoft.Xaml.Interactions.Core"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:local="using:VRChatPictureTagger.Views.Root"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:toolkit="toolkit"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-    <Page.Resources>
-        <DataTemplate x:Key="NavigationViewHeaderTemplate">
-            <local:PageHeader
-                Title="{Binding Title}"
-                ApiNamespace="{Binding ApiNamespace}"
-                Background="Transparent"
-                BackgroundColorOpacity="1" />
-        </DataTemplate>
-    </Page.Resources>
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-
-        <Rectangle
-            x:Name="XboxContentSafeRect"
-            Width="48"
-            Canvas.ZIndex="0"
-            Fill="{ThemeResource NavigationViewDefaultPaneBackground}"
-            Visibility="Collapsed" />
 
         <Border
             x:Name="AppTitleBar"
             Grid.Column="1"
             Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
             VerticalAlignment="Top"
+            Background="Transparent"
             Canvas.ZIndex="1"
-            IsHitTestVisible="True">
+            IsHitTestVisible="True"
+            Visibility="Visible">
             <TextBlock
                 x:Name="AppTitle"
                 Margin="0,15,0,0"
                 VerticalAlignment="Top"
-                Style="{StaticResource CaptionTextBlockStyle}"
                 Text="VRChat Picture Tagger" />
         </Border>
+
         <NavigationView
             x:Name="NavigationViewControl"
+            Grid.Row="0"
             Grid.Column="1"
-            AlwaysShowHeader="True"
-            Canvas.ZIndex="0"
+            AlwaysShowHeader="False"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
+            FooterMenuItemsSource="{Binding MenuFooterEntries}"
             Header=" "
             IsTabStop="False"
             IsTitleBarAutoPaddingEnabled="True"
-            Loaded="OnNavigationViewControlLoaded"
             MenuItemsSource="{Binding MenuEntries}"
             PaneClosing="NavigationViewControl_PaneClosing"
             PaneOpening="NavigationViewControl_PaneOpening"

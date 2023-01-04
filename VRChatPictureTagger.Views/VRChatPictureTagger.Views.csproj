@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="NavigationPage.xaml" />
-    <None Remove="Root\PageHeader.xaml" />
     <None Remove="SettingsPage.xaml" />
     <None Remove="ViewResources.xaml" />
   </ItemGroup>
@@ -49,12 +48,6 @@
 
   <ItemGroup>
     <Page Update="SettingsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Root\PageHeader.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 
-using VRChatPictureTagger.Core.Strings;
 using VRChatPictureTagger.Interfaces.Services;
 
 namespace VRChatPictureTagger.ViewModels
@@ -18,6 +17,7 @@ namespace VRChatPictureTagger.ViewModels
 		private List<string> _menuEntries;
 		private object _selectedItem;
 		private bool _isSettingsItem;
+		private List<string> _menuFooterEntries;
 		readonly INavigator _navigator;
 		readonly ILogger<NavigationBaseViewModel> _logger;
 
@@ -27,13 +27,19 @@ namespace VRChatPictureTagger.ViewModels
 			set => SetProperty(ref _menuEntries, value);
 		}
 
+		public List<string> MenuFooterEntries
+		{
+			get => _menuFooterEntries;
+			set => SetProperty(ref _menuFooterEntries, value);
+		}
+
 		public object SelectedItem
 		{
 			get => _selectedItem;
 			set
 			{
 				SetProperty(ref _selectedItem, value);
-				GoToView((NavigationViewItem)_selectedItem);
+				GoToView(_selectedItem);
 			}
 		}
 
@@ -46,6 +52,7 @@ namespace VRChatPictureTagger.ViewModels
 		public NavigationBaseViewModel(INavigator navigator, ILogger<NavigationBaseViewModel> logger)
 		{
 			MenuEntries = new List<string>() { "Menu 1", "Menu 2" };
+			MenuFooterEntries = new List<string>() { "Logs" };
 			_navigator = navigator;
 			_logger = logger;
 			GoToViewCommand = new RelayCommand<NavigationViewItem>(GoToView);
@@ -60,21 +67,30 @@ namespace VRChatPictureTagger.ViewModels
 		}
 
 		public ICommand GoToViewCommand { get; }
-		public void GoToView(NavigationViewItem menuItem)
+		public void GoToView(object menuItem)
 		{
 			try
 			{
-				if (_isSettingsItem)
+				if (_isSettingsItem && menuItem is NavigationViewItem settingsItem)
 				{
-					_navigator.NavigateTo(FriendlyNames.Settings);
+					_navigator.NavigateTo(settingsItem.Tag.ToString());
 					return;
 				}
-				if (_navigator.CanNavigateTo((string)menuItem.Tag))
-					_navigator.NavigateTo((string)menuItem.Tag);
-			}
-			catch (Exception)
-			{
 
+				string friendlyName = string.Empty;
+
+				if (menuItem is string menuString && _navigator.CanNavigateTo(menuString))
+					friendlyName = menuString;
+
+				if (menuItem is NavigationViewItem navItem && _navigator.CanNavigateTo(navItem.Tag.ToString()))
+					friendlyName = navItem.Tag.ToString();
+
+				if (!string.IsNullOrWhiteSpace(friendlyName))
+					_navigator.NavigateTo(friendlyName);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Exception occured trying to navigate to item {menuitem}", menuItem);
 			}
 		}
 	}
