@@ -7,10 +7,10 @@ using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.Extensions.Options;
 
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Core.Strings;
 using VRChatPictureTagger.Interfaces.Navigation;
 using VRChatPictureTagger.Interfaces.Services;
-using VRChatPictureTagger.Models.Settings;
 
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -21,19 +21,18 @@ namespace VRChatPictureTagger.ViewModels
 	{
 		public string FriendlyName => FriendlyNames.Settings;
 
-		private readonly IOptions<SearchSettings> _settings;
+		private readonly IOptions<Paths> _settings;
 		readonly ISaveSettingsService _saveSettings;
 		readonly IWindowHandleService _windowHandleService;
 		private bool _dontSearchVrcFolder;
 		private string _selectedSearchPath;
 
-		public SettingsViewModel(IOptions<SearchSettings> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService)
+		public SettingsViewModel(IOptions<Paths> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService)
 		{
 			_settings = settings;
 			_saveSettings = saveSettings;
 			_windowHandleService = windowHandleService;
-			SearchFolders = new ObservableCollection<string>(_settings.Value.AdditionalPictureSearchPaths);
-			DontSearchVrcFolder = _settings.Value.DontSearchVRChatFolder;
+			SearchFolders = new ObservableCollection<string>(_settings.Value.PictureSearchPaths);
 
 			AddSearchPathCommand = new RelayCommand(AddSearchPath);
 			RemoveSearchPathCommand = new RelayCommand(RemoveSearchPath);
@@ -59,7 +58,7 @@ namespace VRChatPictureTagger.ViewModels
 		public void RemoveSearchPath()
 		{
 			SearchFolders.Remove(_selectedSearchPath);
-			_settings.Value.AdditionalPictureSearchPaths.Remove(_selectedSearchPath);
+			_settings.Value.PictureSearchPaths.Remove(_selectedSearchPath);
 		}
 
 		public async void AddSearchPath()
@@ -72,7 +71,7 @@ namespace VRChatPictureTagger.ViewModels
 			if (newFolder != null && !SearchFolders.Contains(newFolder.Path))
 			{
 				SearchFolders.Add(newFolder.Path);
-				_settings.Value.AdditionalPictureSearchPaths.Add(newFolder.Path);
+				_settings.Value.PictureSearchPaths.Add(newFolder.Path);
 			}
 		}
 
@@ -84,10 +83,10 @@ namespace VRChatPictureTagger.ViewModels
 		public void NavigatedTo()
 		{
 			SearchFolders.Clear();
-			foreach (var item in _settings.Value.AdditionalPictureSearchPaths)
+			foreach (var item in _settings.Value.PictureSearchPaths)
 				SearchFolders.Add(item);
 
-			DontSearchVrcFolder = _settings.Value.DontSearchVRChatFolder;
+
 		}
 	}
 }

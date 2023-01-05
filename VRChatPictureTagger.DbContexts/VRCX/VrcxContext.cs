@@ -2,18 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Models.VRCX_SQLite;
-
-using Windows.UI;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -28,7 +22,7 @@ namespace VRChatPictureTagger.DbContexts.VRCX
 		{
 		}
 
-		public VrcxContext(DbContextOptions<VrcxContext> options)
+		public VrcxContext(DbContextOptions<VrcxContext> options, IConfiguration<Paths> configuration)
 			: base(options)
 		{
 			string dbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");

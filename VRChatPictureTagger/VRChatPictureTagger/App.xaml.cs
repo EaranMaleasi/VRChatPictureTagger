@@ -44,6 +44,8 @@ namespace VRChatPictureTagger
 			AppConfiguration.ConfigureViews(_appHost.Services);
 			AppConfiguration.ConfigureServices(_appHost.Services);
 
+
+
 			var navView = _appHost.Services.GetService<NavigationPage>();
 			var navViewModel = _appHost.Services.GetService<NavigationBaseViewModel>();
 

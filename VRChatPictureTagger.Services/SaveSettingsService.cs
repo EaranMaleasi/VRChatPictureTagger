@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Services;
-using VRChatPictureTagger.Models.Settings;
 
 namespace VRChatPictureTagger.Services
 {
@@ -20,16 +20,17 @@ namespace VRChatPictureTagger.Services
 		public SaveSettingsService(ILogger<SaveSettingsService> logger)
 		{ _logger = logger; }
 
-		public async Task SaveSearchSettings(SearchSettings newSearchSettings)
+		public async Task SavePathSettings(Paths newPathSettings)
 		{
 			try
 			{
 				string json = await File.ReadAllTextAsync(settingsFile);
 				JObject jsonObj = (JObject)JsonConvert.DeserializeObject(json);
-				JObject searchObject = jsonObj[nameof(SearchSettings)] as JObject;
+				JObject searchObject = jsonObj[nameof(Paths)] as JObject;
 
-				searchObject.Property(nameof(SearchSettings.DontSearchVRChatFolder)).Value = newSearchSettings.DontSearchVRChatFolder;
-				searchObject.Property(nameof(SearchSettings.AdditionalPictureSearchPaths)).Value = JArray.FromObject(newSearchSettings.AdditionalPictureSearchPaths);
+				searchObject.Property(nameof(Paths.PictureSearchPaths)).Value = JArray.FromObject(newPathSettings.PictureSearchPaths);
+				searchObject.Property(nameof(Paths.VrcptDbPath)).Value = JArray.FromObject(newPathSettings.VrcptDbPath);
+				searchObject.Property(nameof(Paths.VrcxDbPath)).Value = JArray.FromObject(newPathSettings.VrcxDbPath);
 
 				string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
 				await File.WriteAllTextAsync(settingsFile, output);

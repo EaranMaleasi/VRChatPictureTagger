@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-using VRChatPictureTagger.Models.Settings;
+using VRChatPictureTagger.Core.Settings;
 
 namespace VRChatPictureTagger.Interfaces.Services
 {
 	public interface ISaveSettingsService
 	{
-		Task SaveSearchSettings(SearchSettings newSearchSettings);
+		Task SavePathSettings(Paths newPathSettings);
 	}
 }

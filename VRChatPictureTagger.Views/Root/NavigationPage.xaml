@@ -50,9 +50,7 @@
             <interactivity:Interaction.Behaviors>
                 <behaviors:IsSettingsItemBehaviour IsSettingsItem="{Binding IsSettingsItem, Mode=TwoWay}" />
             </interactivity:Interaction.Behaviors>
-
-            <Frame x:Name="rootFrame" />
-
+            <Frame x:Name="rootFrame" Margin="36" />
         </NavigationView>
     </Grid>
 
