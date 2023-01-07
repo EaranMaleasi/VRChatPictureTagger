@@ -7,7 +7,9 @@
 		VrcptDbPathNull,
 
 		VrcxDbPathNotFound,
+		VrcptDbPathNotFound,
 
 		NoSearchPaths,
+		Valid
 	}
 }

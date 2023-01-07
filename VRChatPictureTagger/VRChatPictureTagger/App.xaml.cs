@@ -36,7 +36,7 @@ namespace VRChatPictureTagger
 		/// Invoked when the application is launched.
 		/// </summary>
 		/// <param name="args">Details about the launch request and process.</param>
-		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+		protected override void OnLaunched(LaunchActivatedEventArgs args)
 		{
 			_mainWindow = new();
 
@@ -48,6 +48,14 @@ namespace VRChatPictureTagger
 
 			var navView = _appHost.Services.GetService<NavigationPage>();
 			var navViewModel = _appHost.Services.GetService<NavigationBaseViewModel>();
+
+			ISetupValidatorService setupValidator = _appHost.Services.GetService<ISetupValidatorService>();
+			var result = setupValidator.ValidateSetup();
+			if (!result.isValid)
+			{
+
+			}
+
 
 			INavigator navigator = _appHost.Services.GetService<INavigator>();
 			navigator.Initialize(navView.GetRootFrame());
