@@ -4,7 +4,7 @@ namespace VRChatPictureTagger.Interfaces.Services
 {
 	public interface ISetupValidatorService
 	{
-		void SetupDefaults();
-		(bool isValid, ValidationResult result) ValidateSetup();
+		void SetupDefaultSearchPath();
+		ValidationResult ValidateSetup();
 	}
 }

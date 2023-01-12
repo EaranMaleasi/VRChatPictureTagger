@@ -66,9 +66,6 @@ namespace VRChatPictureTagger.Services
 
 				_navigationFrame.Navigate(viewType);
 
-				var view = (NavigationView)_navigationFrame.Parent;
-				view.back
-
 				var view = _navigationFrame.Content as Page;
 				if (view != null && view.DataContext != null)
 					view.DataContext = _viewFactory.ResolveViewModel((IView)view);

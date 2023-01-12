@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
-using System;
-using System.IO;
-
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
+using VRChatPictureTagger.Core.Defaults;
 using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Models.VRCX_SQLite;
 
@@ -22,12 +21,10 @@ namespace VRChatPictureTagger.DbContexts.VRCX
 		{
 		}
 
-		public VrcxContext(DbContextOptions<VrcxContext> options, IConfiguration<Paths> configuration)
-			: base(options)
+		public VrcxContext(DbContextOptions<VrcxContext> contextOptions, IOptions<Paths> pathOptions)
+			: base(contextOptions)
 		{
-			string dbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
-			Directory.CreateDirectory(dbPath);
-			DbPath = Path.Join(dbPath, "VRCX.sqlite3");
+			DbPath = Default.Paths.defaultVrcxDbPath;
 		}
 
 

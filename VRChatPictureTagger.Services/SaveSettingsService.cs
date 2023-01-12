@@ -29,8 +29,6 @@ namespace VRChatPictureTagger.Services
 				JObject searchObject = jsonObj[nameof(Paths)] as JObject;
 
 				searchObject.Property(nameof(Paths.PictureSearchPaths)).Value = JArray.FromObject(newPathSettings.PictureSearchPaths);
-				searchObject.Property(nameof(Paths.VrcptDbPath)).Value = JArray.FromObject(newPathSettings.VrcptDbPath);
-				searchObject.Property(nameof(Paths.VrcxDbPath)).Value = JArray.FromObject(newPathSettings.VrcxDbPath);
 
 				string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
 				await File.WriteAllTextAsync(settingsFile, output);

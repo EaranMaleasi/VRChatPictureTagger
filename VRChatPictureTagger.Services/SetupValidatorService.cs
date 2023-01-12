@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using VRChatPictureTagger.Core.Defaults;
 using VRChatPictureTagger.Core.Enums;
 using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Services;
@@ -13,10 +10,6 @@ namespace VRChatPictureTagger.Services
 {
 	public class SetupValidatorService : ISetupValidatorService
 	{
-		static readonly string defaultVrcptDbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCPT", "VRCPT.sqlite3");
-		static readonly string defaultVrcxDbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX", "VRCX.sqlite3");
-		static readonly string defaultVrcFolderPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
-
 		readonly IOptions<Paths> _options;
 		readonly ILogger<SetupValidatorService> _logger;
 		readonly ISaveSettingsService _settingsService;
@@ -28,47 +21,27 @@ namespace VRChatPictureTagger.Services
 			_settingsService = settingsService;
 		}
 
-		public (bool, ValidationResult) ValidateSetup()
+		public ValidationResult ValidateSetup()
 		{
 			_logger.LogInformation($"Validating settings");
 
-			bool isValid = true;
+			ValidationResult result = ValidationResult.Valid;
 
 			Paths pathSettings = _options.Value;
 
-			if (pathSettings == null)
-				return (false, ValidationResult.NoSettingsObject);
-			if (isValid && string.IsNullOrWhiteSpace(pathSettings.VrcxDbPath))
-				return (false, ValidationResult.VrcxDbPathNull);
-			if (isValid && string.IsNullOrWhiteSpace(pathSettings.VrcptDbPath))
-				return (false, ValidationResult.VrcptDbPathNull);
+			if (pathSettings.PictureSearchPaths.Count == 0)
+				result |= ValidationResult.NoSearchPaths;
 
-			FileInfo fiVrcxDb = new(pathSettings.VrcxDbPath);
-			FileInfo fiVrptDb = new(pathSettings.VrcptDbPath);
-
-			if (!fiVrcxDb.Exists)
-				return (false, ValidationResult.VrcxDbPathNotFound);
-			if (!fiVrptDb.Exists)
-				return (false, ValidationResult.VrcptDbPathNull);
-
-			if (pathSettings.PictureSearchPaths != null || pathSettings.PictureSearchPaths.Count == 0)
-				return (false, ValidationResult.NoSearchPaths);
-
-			return (true, ValidationResult.Valid);
+			return result;
 		}
 
-		public void SetupDefaults()
+		public void SetupDefaultSearchPath()
 		{
-			_logger.LogInformation("Set path settings to default");
-			Paths paths = new()
-			{
-				VrcptDbPath = defaultVrcptDbPath,
-				VrcxDbPath = defaultVrcxDbPath,
-				PictureSearchPaths = new List<string> { defaultVrcFolderPath }
-			};
+			_logger.LogInformation("Set search paths to default");
+			_options.Value.PictureSearchPaths = new() { Default.Paths.defaultVrcFolderPath };
 
-			_logger.LogInformation("Override old path settings");
-			_settingsService.SavePathSettings(paths);
+			_logger.LogInformation("Overwrite old settings");
+			_settingsService.SavePathSettings(_options.Value);
 		}
 	}
 }

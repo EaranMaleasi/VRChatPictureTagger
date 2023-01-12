@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
-using Microsoft.EntityFrameworkCore;
-
+using VRChatPictureTagger.Core.Defaults;
 using VRChatPictureTagger.DbContexts.VRCX;
 
 namespace VRChatPictureTagger.DbContexts.VRCPT
@@ -20,15 +14,10 @@ namespace VRChatPictureTagger.DbContexts.VRCPT
 
 		public VRCPTContext()
 		{
-			string dbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRChatPictureTagger");
-			Directory.CreateDirectory(dbPath);
-			DbPath = Path.Join(dbPath, "VRCPT.sqlite3");
 		}
 
-		public VRCPTContext(DbContextOptions<VrcxContext> options)
-			: base(options)
-		{
-		}
+		public VRCPTContext(DbContextOptions<VrcxContext> contextOptions) : base(contextOptions)
+			=> DbPath = Default.Paths.defaultVrcptDbPath;
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		   => optionsBuilder.UseSqlite(DbPath);

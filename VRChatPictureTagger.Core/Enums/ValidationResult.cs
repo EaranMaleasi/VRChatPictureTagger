@@ -1,15 +1,12 @@
-﻿namespace VRChatPictureTagger.Core.Enums
+﻿using System;
+
+namespace VRChatPictureTagger.Core.Enums
 {
+	[Flags]
 	public enum ValidationResult
 	{
-		NoSettingsObject,
-		VrcxDbPathNull,
-		VrcptDbPathNull,
-
-		VrcxDbPathNotFound,
-		VrcptDbPathNotFound,
-
-		NoSearchPaths,
-		Valid
+		None = 0,
+		NoSearchPaths = 1,
+		Valid = 2,
 	}
 }

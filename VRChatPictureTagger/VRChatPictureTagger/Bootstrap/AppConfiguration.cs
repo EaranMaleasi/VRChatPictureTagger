@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 
 using Serilog;
 
+using VRChatPictureTagger.Core.Enums;
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.DbContexts.Bootstrap;
 using VRChatPictureTagger.Interfaces.Services;
 using VRChatPictureTagger.Models.Bootstrap;
@@ -33,6 +35,7 @@ namespace VRChatPictureTagger.Bootstrap
 							.AddVRCPT_ViewModels()
 							.AddVRCPT_Views()
 							.AddVRCPT_Contexts();
+					services.Configure<MainWindowOption>(x => x.MainWindow = App._mainWindow);
 				})
 				.ConfigureLogging((context, logging) =>
 				{
@@ -40,17 +43,19 @@ namespace VRChatPictureTagger.Bootstrap
 				})
 				.Build();
 
-		internal static void ConfigureServices(IServiceProvider services)
-		{
-			IWindowHandleService handleService = services.GetService<IWindowHandleService>();
-			handleService.Initialize(App._mainWindow);
-		}
-
 		internal static void ConfigureViews(IServiceProvider services)
 		{
 			IViewFactory viewFactory = services.GetService<IViewFactory>();
 			viewFactory.Register<SettingsViewModel, SettingsPage>();
+		}
 
+		internal static void ValidateSettings(IServiceProvider services)
+		{
+			ISetupValidatorService setupValidator = services.GetService<ISetupValidatorService>();
+
+			ValidationResult result = setupValidator.ValidateSetup();
+			if (result.HasFlag(ValidationResult.NoSearchPaths))
+				setupValidator.SetupDefaultSearchPath();
 		}
 	}
 }

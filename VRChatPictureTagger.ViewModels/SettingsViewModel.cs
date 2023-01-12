@@ -77,7 +77,7 @@ namespace VRChatPictureTagger.ViewModels
 
 		public async void NavigatedFrom()
 		{
-			await _saveSettings.SaveSearchSettings(_settings.Value);
+			await _saveSettings.SavePathSettings(_settings.Value);
 		}
 
 		public void NavigatedTo()

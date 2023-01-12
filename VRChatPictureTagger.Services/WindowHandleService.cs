@@ -1,7 +1,8 @@
 ﻿using System;
 
-using Microsoft.UI.Xaml;
+using Microsoft.Extensions.Options;
 
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Services;
 
 using Windows.Storage.Pickers;
@@ -10,24 +11,14 @@ namespace VRChatPictureTagger.Services
 {
 	public class WindowHandleService : IWindowHandleService
 	{
-		private Window _rootWindow;
-		private bool _isInitialized = false;
+		readonly IOptions<MainWindowOption> _options;
 
-		public void Initialize(Window window)
-		{
-			if (_isInitialized)
-				return;
-
-			_isInitialized = true;
-			_rootWindow = window;
-		}
+		public WindowHandleService(IOptions<MainWindowOption> options)
+			=> _options = options;
 
 		public void SetWindowHandleOnPicker(FolderPicker folderPicker)
 		{
-			if (!_isInitialized)
-				return;
-
-			IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_rootWindow);
+			IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_options.Value.MainWindow);
 			WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
 		}
 	}

@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 
 using VRChatPictureTagger.Bootstrap;
@@ -21,6 +22,8 @@ namespace VRChatPictureTagger
 	public partial class App : Application
 	{
 		private IHost _appHost;
+		private ILogger<App> _logger;
+
 		public static Window _mainWindow { get; private set; }
 
 		/// <summary>
@@ -30,6 +33,12 @@ namespace VRChatPictureTagger
 		public App()
 		{
 			InitializeComponent();
+			UnhandledException += App_UnhandledException;
+		}
+
+		private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			_logger?.LogCritical(e.Exception, "Unhandled exception {message} occured", e.Message);
 		}
 
 		/// <summary>
@@ -41,21 +50,14 @@ namespace VRChatPictureTagger
 			_mainWindow = new();
 
 			_appHost = AppConfiguration.BuildHost();
+
+			AppConfiguration.ValidateSettings(_appHost.Services);
 			AppConfiguration.ConfigureViews(_appHost.Services);
-			AppConfiguration.ConfigureServices(_appHost.Services);
 
-
+			_logger = _appHost.Services.GetRequiredService<ILogger<App>>();
 
 			var navView = _appHost.Services.GetService<NavigationPage>();
 			var navViewModel = _appHost.Services.GetService<NavigationBaseViewModel>();
-
-			ISetupValidatorService setupValidator = _appHost.Services.GetService<ISetupValidatorService>();
-			var result = setupValidator.ValidateSetup();
-			if (!result.isValid)
-			{
-
-			}
-
 
 			INavigator navigator = _appHost.Services.GetService<INavigator>();
 			navigator.Initialize(navView.GetRootFrame());
@@ -64,8 +66,6 @@ namespace VRChatPictureTagger
 			_mainWindow.Content = navView;
 
 			navView.RootWindow = _mainWindow;
-
-
 			_mainWindow.Activate();
 		}
 	}

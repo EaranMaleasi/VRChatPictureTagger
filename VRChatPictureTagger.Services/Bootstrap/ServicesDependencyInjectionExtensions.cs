@@ -12,6 +12,7 @@ namespace VRChatPictureTagger.Services.Bootstrap
 			services.AddSingleton<ISaveSettingsService, SaveSettingsService>();
 			services.AddSingleton<INavigator, Navigator>();
 			services.AddSingleton<IWindowHandleService, WindowHandleService>();
+			services.AddSingleton<ISetupValidatorService, SetupValidatorService>();
 
 
 			return services;
