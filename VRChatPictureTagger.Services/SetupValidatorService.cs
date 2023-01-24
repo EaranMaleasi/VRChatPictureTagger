@@ -10,11 +10,11 @@ namespace VRChatPictureTagger.Services
 {
 	public class SetupValidatorService : ISetupValidatorService
 	{
-		readonly IOptions<Paths> _options;
+		readonly IOptions<MainSettings> _options;
 		readonly ILogger<SetupValidatorService> _logger;
 		readonly ISaveSettingsService _settingsService;
 
-		public SetupValidatorService(IOptions<Paths> options, ILogger<SetupValidatorService> logger, ISaveSettingsService settingsService)
+		public SetupValidatorService(IOptions<MainSettings> options, ILogger<SetupValidatorService> logger, ISaveSettingsService settingsService)
 		{
 			_options = options;
 			_logger = logger;
@@ -27,7 +27,7 @@ namespace VRChatPictureTagger.Services
 
 			ValidationResult result = ValidationResult.Valid;
 
-			Paths pathSettings = _options.Value;
+			MainSettings pathSettings = _options.Value;
 
 			if (pathSettings.PictureSearchPaths.Count == 0)
 				result |= ValidationResult.NoSearchPaths;

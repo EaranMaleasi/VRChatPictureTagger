@@ -21,13 +21,13 @@ namespace VRChatPictureTagger.ViewModels
 	{
 		public string FriendlyName => FriendlyNames.Settings;
 
-		private readonly IOptions<Paths> _settings;
+		private readonly IOptions<MainSettings> _settings;
 		readonly ISaveSettingsService _saveSettings;
 		readonly IWindowHandleService _windowHandleService;
 		private bool _dontSearchVrcFolder;
 		private string _selectedSearchPath;
 
-		public SettingsViewModel(IOptions<Paths> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService)
+		public SettingsViewModel(IOptions<MainSettings> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService)
 		{
 			_settings = settings;
 			_saveSettings = saveSettings;

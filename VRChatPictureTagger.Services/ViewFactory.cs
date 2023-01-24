@@ -65,6 +65,12 @@ namespace VRChatPictureTagger.Services
 			_mapViewToViewModel[vName] = vmType;
 		}
 
+		/// <summary>
+		/// Resolves the View from the <typeparamref name="TViewModel"/> type and optionally attaches the corresponding ViewModel to the DataContext
+		/// </summary>
+		/// <typeparam name="TViewModel">The type of the ViewModel</typeparam>
+		/// <param name="attachDataContext">Resolve and attach the ViewModel to the DataContext of the View</param>
+		/// <returns>A Page with optionally attached DataContext</returns>
 		public Page ResolveView<TViewModel>(bool attachDataContext = true) where TViewModel : class, IViewModel
 		{
 			try
@@ -103,6 +109,12 @@ namespace VRChatPictureTagger.Services
 				throw;
 			}
 		}
+		/// <summary>
+		/// Resolves the View from the <paramref name="friendlyName"/> and optionally attaches the corresponding ViewModel to the DataContext
+		/// </summary>
+		/// <param name="friendlyName">The name of the View/ViewModel to resolve</param>
+		/// <param name="attachDataContext">Resolve and attach the ViewModel to the DataContext of the View</param>
+		/// <returns>A Page with optionally attached DataContext</returns>
 		public Page ResolveView(string friendlyName, bool attachDataContext = true)
 		{
 			Guard.IsNotNullOrWhiteSpace(friendlyName);

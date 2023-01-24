@@ -35,7 +35,13 @@ namespace VRChatPictureTagger.Bootstrap
 							.AddVRCPT_ViewModels()
 							.AddVRCPT_Views()
 							.AddVRCPT_Contexts();
-					services.Configure<MainWindowOption>(x => x.MainWindow = App._mainWindow);
+					services.Configure<WindowAndNavigationOptions>(x =>
+					{
+						x.MainWindow = App.MainWindow;
+						x.UseViewStack = false;
+						x.ContentFrame = App.ContentFrame;
+						x.UIDispatcher = App.UiDispatcherQueue;
+					});
 				})
 				.ConfigureLogging((context, logging) =>
 				{

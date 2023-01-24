@@ -4,10 +4,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 using VRChatPictureTagger.Bootstrap;
-using VRChatPictureTagger.Interfaces.Services;
 using VRChatPictureTagger.ViewModels;
 using VRChatPictureTagger.Views.Root;
 
@@ -24,7 +25,10 @@ namespace VRChatPictureTagger
 		private IHost _appHost;
 		private ILogger<App> _logger;
 
-		public static Window _mainWindow { get; private set; }
+		public static DispatcherQueue UiDispatcherQueue { get; private set; }
+
+		public static Window MainWindow { get; private set; }
+		public static Frame ContentFrame { get; private set; }
 
 		/// <summary>
 		/// Initializes the singleton application object.  This is the first line of authored code
@@ -47,7 +51,12 @@ namespace VRChatPictureTagger
 		/// <param name="args">Details about the launch request and process.</param>
 		protected override void OnLaunched(LaunchActivatedEventArgs args)
 		{
-			_mainWindow = new();
+			MainWindow = new();
+
+			NavigationPage navView = new();
+			ContentFrame = navView.GetRootFrame();
+
+			UiDispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
 			_appHost = AppConfiguration.BuildHost();
 
@@ -56,17 +65,13 @@ namespace VRChatPictureTagger
 
 			_logger = _appHost.Services.GetRequiredService<ILogger<App>>();
 
-			var navView = _appHost.Services.GetService<NavigationPage>();
 			var navViewModel = _appHost.Services.GetService<NavigationBaseViewModel>();
 
-			INavigator navigator = _appHost.Services.GetService<INavigator>();
-			navigator.Initialize(navView.GetRootFrame());
-
 			navView.DataContext = navViewModel;
-			_mainWindow.Content = navView;
+			MainWindow.Content = navView;
 
-			navView.RootWindow = _mainWindow;
-			_mainWindow.Activate();
+			navView.RootWindow = MainWindow;
+			MainWindow.Activate();
 		}
 	}
 }

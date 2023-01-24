@@ -20,15 +20,15 @@ namespace VRChatPictureTagger.Services
 		public SaveSettingsService(ILogger<SaveSettingsService> logger)
 		{ _logger = logger; }
 
-		public async Task SavePathSettings(Paths newPathSettings)
+		public async Task SavePathSettings(MainSettings newPathSettings)
 		{
 			try
 			{
 				string json = await File.ReadAllTextAsync(settingsFile);
 				JObject jsonObj = (JObject)JsonConvert.DeserializeObject(json);
-				JObject searchObject = jsonObj[nameof(Paths)] as JObject;
+				JObject searchObject = jsonObj[nameof(MainSettings)] as JObject;
 
-				searchObject.Property(nameof(Paths.PictureSearchPaths)).Value = JArray.FromObject(newPathSettings.PictureSearchPaths);
+				searchObject.Property(nameof(MainSettings.PictureSearchPaths)).Value = JArray.FromObject(newPathSettings.PictureSearchPaths);
 
 				string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
 				await File.WriteAllTextAsync(settingsFile, output);

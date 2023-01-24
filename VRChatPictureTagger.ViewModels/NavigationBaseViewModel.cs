@@ -6,8 +6,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Controls;
 
+using VRChatPictureTagger.Core.Enums;
+using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Services;
 
 namespace VRChatPictureTagger.ViewModels
@@ -18,21 +21,22 @@ namespace VRChatPictureTagger.ViewModels
 		private object _selectedItem;
 		private bool _isSettingsItem;
 		private List<string> _menuFooterEntries;
+		private bool? _isBackNavigationEnabled;
 		readonly INavigator _navigator;
 		readonly ILogger<NavigationBaseViewModel> _logger;
+		readonly IOptions<MainSettings> _options;
+		readonly IMessagingCenter _messagingCenter;
 
 		public List<string> MenuEntries
 		{
 			get => _menuEntries;
 			set => SetProperty(ref _menuEntries, value);
 		}
-
 		public List<string> MenuFooterEntries
 		{
 			get => _menuFooterEntries;
 			set => SetProperty(ref _menuFooterEntries, value);
 		}
-
 		public object SelectedItem
 		{
 			get => _selectedItem;
@@ -42,25 +46,45 @@ namespace VRChatPictureTagger.ViewModels
 				GoToView(_selectedItem);
 			}
 		}
-
 		public bool IsSettingsItem
 		{
 			get => _isSettingsItem;
 			set => SetProperty(ref _isSettingsItem, value);
 		}
 
-		public NavigationBaseViewModel(INavigator navigator, ILogger<NavigationBaseViewModel> logger)
+		public bool? IsBackNavigationEnabled
+		{
+			get => _isBackNavigationEnabled;
+			set => SetProperty(ref _isBackNavigationEnabled, value);
+		}
+
+		public NavigationBaseViewModel(ILogger<NavigationBaseViewModel> logger, IOptions<MainSettings> options, INavigator navigator, IMessagingCenter messagingCenter)
 		{
 			MenuEntries = new List<string>() { "Menu 1", "Menu 2" };
 			MenuFooterEntries = new List<string>() { "Logs" };
+
 			_navigator = navigator;
 			_logger = logger;
+			_options = options;
+			_messagingCenter = messagingCenter;
+
+			_messagingCenter.SubscribeTo(MessagingEvents.SettingsChanged, SettingsChanged);
+
+			IsBackNavigationEnabled = _options.Value.UseBackNavigation;
+
 			GoToViewCommand = new RelayCommand<NavigationViewItem>(GoToView);
 			SelectionChangedCommand = new RelayCommand<object>(SelectionChanged);
 		}
 
-		public ICommand SelectionChangedCommand { get; }
+		~NavigationBaseViewModel()
+			=> _messagingCenter.UnsubscribeFrom(this, MessagingEvents.SettingsChanged);
 
+		private void SettingsChanged()
+		{
+			IsBackNavigationEnabled = _options.Value.UseBackNavigation;
+		}
+
+		public ICommand SelectionChangedCommand { get; }
 		private void SelectionChanged(object selectionArgs)
 		{
 			_logger.LogInformation("this actually worked, type is {type}", selectionArgs.GetType());

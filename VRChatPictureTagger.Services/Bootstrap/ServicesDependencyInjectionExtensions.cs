@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using VRChatPictureTagger.Interfaces.Services;
+using VRChatPictureTagger.Services.Messaging;
 
 namespace VRChatPictureTagger.Services.Bootstrap
 {
@@ -13,6 +14,7 @@ namespace VRChatPictureTagger.Services.Bootstrap
 			services.AddSingleton<INavigator, Navigator>();
 			services.AddSingleton<IWindowHandleService, WindowHandleService>();
 			services.AddSingleton<ISetupValidatorService, SetupValidatorService>();
+			services.AddSingleton<IMessagingCenter, MessagingCenter>();
 
 
 			return services;

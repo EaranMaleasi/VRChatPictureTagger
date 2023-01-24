@@ -11,9 +11,9 @@ namespace VRChatPictureTagger.Services
 {
 	public class WindowHandleService : IWindowHandleService
 	{
-		readonly IOptions<MainWindowOption> _options;
+		readonly IOptions<WindowAndNavigationOptions> _options;
 
-		public WindowHandleService(IOptions<MainWindowOption> options)
+		public WindowHandleService(IOptions<WindowAndNavigationOptions> options)
 			=> _options = options;
 
 		public void SetWindowHandleOnPicker(FolderPicker folderPicker)
