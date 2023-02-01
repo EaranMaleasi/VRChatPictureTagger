@@ -2,6 +2,8 @@
 {
 	public enum MessagingEvents
 	{
-		SettingsChanged
+		SettingsChanged,
+		Setting_BackNavigationChanged,
+		Navigation_BackRequested,
 	}
 }

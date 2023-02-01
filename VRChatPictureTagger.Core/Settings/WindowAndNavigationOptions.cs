@@ -8,7 +8,6 @@ namespace VRChatPictureTagger.Core.Settings
 	{
 		public Window MainWindow { get; set; }
 		public Frame ContentFrame { get; set; }
-		public bool UseViewStack { get; set; }
 		public DispatcherQueue UIDispatcher { get; set; }
 	}
 }

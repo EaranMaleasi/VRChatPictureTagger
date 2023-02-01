@@ -1,5 +1,7 @@
 ﻿using System;
 
+using CommunityToolkit.Mvvm.Messaging;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,11 +36,11 @@ namespace VRChatPictureTagger.Bootstrap
 							.AddVRCPT_Models()
 							.AddVRCPT_ViewModels()
 							.AddVRCPT_Views()
-							.AddVRCPT_Contexts();
+							.AddVRCPT_Contexts()
+							.AddSingleton<IMessenger>(StrongReferenceMessenger.Default);
 					services.Configure<WindowAndNavigationOptions>(x =>
 					{
 						x.MainWindow = App.MainWindow;
-						x.UseViewStack = false;
 						x.ContentFrame = App.ContentFrame;
 						x.UIDispatcher = App.UiDispatcherQueue;
 					});

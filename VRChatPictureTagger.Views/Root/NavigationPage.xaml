@@ -8,7 +8,8 @@
     xmlns:CoreConverters="using:VRChatPictureTagger.Core.Converters"
     xmlns:behaviors="using:VRChatPictureTagger.Views.Behaviours"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
@@ -54,9 +55,12 @@
             PaneDisplayMode="Auto"
             PaneOpening="NavigationViewControl_PaneOpening"
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
-            <interactivity:Interaction.Behaviors>
+            <i:Interaction.Behaviors>
+                <ic:EventTriggerBehavior EventName="BackRequested">
+                    <ic:InvokeCommandAction Command="{Binding BackRequestedCommand}" />
+                </ic:EventTriggerBehavior>
                 <behaviors:IsSettingsItemBehaviour IsSettingsItem="{Binding IsSettingsItem, Mode=TwoWay}" />
-            </interactivity:Interaction.Behaviors>
+            </i:Interaction.Behaviors>
             <Frame x:Name="rootFrame" Margin="36" />
         </NavigationView>
     </Grid>

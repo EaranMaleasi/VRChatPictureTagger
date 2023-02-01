@@ -2,42 +2,51 @@
 using System.Collections.Generic;
 
 using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Controls;
 
+using VRChatPictureTagger.Core.Messages;
 using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Navigation;
 using VRChatPictureTagger.Interfaces.Services;
 
 namespace VRChatPictureTagger.Services
 {
-	public class Navigator : INavigator
+	public class Navigator : INavigator, IRecipient<UseBackNavigationChanged>, IDisposable
 	{
 		private readonly IViewFactory _viewFactory;
+		private readonly IMessenger _messenger;
 		private readonly ILogger<Navigator> _logger;
-		private readonly IOptions<WindowAndNavigationOptions> _options;
+		private readonly IOptions<MainSettings> _options;
+		private readonly IOptions<WindowAndNavigationOptions> _windowOptions;
 		private readonly Stack<IView> _viewStack;
 		private readonly Frame _contentFrame;
 
 		private IView _currentView;
 		private IViewModel _currentViewModel;
 
-		public bool BackNavigationEnabled => _options.Value.UseViewStack;
-		public bool CanGoBack => _options.Value.UseViewStack ? _viewStack.Count > 0 : false;
+		public bool BackNavigationEnabled => _options.Value.UseBackNavigation;
+		public bool CanGoBack => _options.Value.UseBackNavigation ? _viewStack.Count > 0 : false;
 
 		public Navigator(
-			IViewFactory viewFactory,
 			ILogger<Navigator> logger,
-			IOptions<WindowAndNavigationOptions> options)
+			IOptions<MainSettings> options,
+			IOptions<WindowAndNavigationOptions> windowOptions,
+			IViewFactory viewFactory,
+			IMessenger messenger)
 		{
 			_viewFactory = viewFactory;
+			_messenger = messenger;
 			_logger = logger;
 			_options = options;
-
+			_windowOptions = windowOptions;
 			_viewStack = new Stack<IView>();
-			_contentFrame = _options.Value.ContentFrame;
+			_contentFrame = _windowOptions.Value.ContentFrame;
+
+			_messenger.Register(this);
 		}
 
 		public bool CanNavigateTo(string friendlyName)
@@ -55,7 +64,6 @@ namespace VRChatPictureTagger.Services
 				_logger.LogError(ex, "Error occured trying to navigate to ViewModel {TViewModel}", typeof(TViewModel));
 				throw;
 			}
-
 		}
 		public void NavigateTo(string friendlyName)
 		{
@@ -96,7 +104,7 @@ namespace VRChatPictureTagger.Services
 					_logger.LogInformation("No Views left on the Stack. Show empty page");
 					_currentView = null;
 					_currentViewModel = null;
-					_options.Value.UIDispatcher.TryEnqueue(() => { _contentFrame.Content = null; });
+					_windowOptions.Value.UIDispatcher.TryEnqueue(() => { _contentFrame.Content = null; });
 				}
 				_logger.LogInformation("Successfully navigated back");
 			}
@@ -126,7 +134,7 @@ namespace VRChatPictureTagger.Services
 				_currentViewModel.NavigatedTo();
 
 				//Since this could be called from anywhere, make sure the content is changed on the UI Thread
-				_options.Value.UIDispatcher.TryEnqueue(() => { _contentFrame.Content = newPage; });
+				_windowOptions.Value.UIDispatcher.TryEnqueue(() => { _contentFrame.Content = newPage; });
 
 				_logger.LogInformation("Successfully navigated to page {newPage}", newPage);
 			}
@@ -135,6 +143,18 @@ namespace VRChatPictureTagger.Services
 				_logger.LogError(ex, "Error occured trying to navigate to Page {newPage}", newPage);
 				throw;
 			}
+		}
+		public void Receive(UseBackNavigationChanged message)
+		{
+			_viewStack.Clear();
+			if (message.UseBackNavigation)
+				_viewStack.Push(_currentView);
+		}
+
+		public void Dispose()
+		{
+			_messenger.UnregisterAll(this);
+			_viewStack.Clear();
 		}
 	}
 }

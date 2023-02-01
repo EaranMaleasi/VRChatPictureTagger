@@ -4,18 +4,19 @@ using System.Windows.Input;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml.Controls;
 
-using VRChatPictureTagger.Core.Enums;
+using VRChatPictureTagger.Core.Messages;
 using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Interfaces.Services;
 
 namespace VRChatPictureTagger.ViewModels
 {
-	public class NavigationBaseViewModel : ObservableObject
+	public class NavigationBaseViewModel : ObservableObject, IRecipient<UseBackNavigationChanged>, IDisposable
 	{
 		private List<string> _menuEntries;
 		private object _selectedItem;
@@ -23,9 +24,9 @@ namespace VRChatPictureTagger.ViewModels
 		private List<string> _menuFooterEntries;
 		private bool? _isBackNavigationEnabled;
 		readonly INavigator _navigator;
+		readonly IMessenger _messenger;
 		readonly ILogger<NavigationBaseViewModel> _logger;
 		readonly IOptions<MainSettings> _options;
-		readonly IMessagingCenter _messagingCenter;
 
 		public List<string> MenuEntries
 		{
@@ -58,37 +59,32 @@ namespace VRChatPictureTagger.ViewModels
 			set => SetProperty(ref _isBackNavigationEnabled, value);
 		}
 
-		public NavigationBaseViewModel(ILogger<NavigationBaseViewModel> logger, IOptions<MainSettings> options, INavigator navigator, IMessagingCenter messagingCenter)
+		public NavigationBaseViewModel(
+			ILogger<NavigationBaseViewModel> logger,
+			IOptions<MainSettings> options,
+			INavigator navigator,
+			IMessenger messenger)
 		{
 			MenuEntries = new List<string>() { "Menu 1", "Menu 2" };
 			MenuFooterEntries = new List<string>() { "Logs" };
 
 			_navigator = navigator;
+			_messenger = messenger;
 			_logger = logger;
 			_options = options;
-			_messagingCenter = messagingCenter;
 
-			_messagingCenter.SubscribeTo(MessagingEvents.SettingsChanged, SettingsChanged);
+			_messenger.Register(this);
 
 			IsBackNavigationEnabled = _options.Value.UseBackNavigation;
 
 			GoToViewCommand = new RelayCommand<NavigationViewItem>(GoToView);
 			SelectionChangedCommand = new RelayCommand<object>(SelectionChanged);
-		}
-
-		~NavigationBaseViewModel()
-			=> _messagingCenter.UnsubscribeFrom(this, MessagingEvents.SettingsChanged);
-
-		private void SettingsChanged()
-		{
-			IsBackNavigationEnabled = _options.Value.UseBackNavigation;
+			BackRequestedCommand = new RelayCommand(BackRequested);
 		}
 
 		public ICommand SelectionChangedCommand { get; }
 		private void SelectionChanged(object selectionArgs)
-		{
-			_logger.LogInformation("this actually worked, type is {type}", selectionArgs.GetType());
-		}
+			=> _logger.LogInformation("this actually worked, type is {type}", selectionArgs.GetType());
 
 		public ICommand GoToViewCommand { get; }
 		public void GoToView(object menuItem)
@@ -117,5 +113,16 @@ namespace VRChatPictureTagger.ViewModels
 				_logger.LogError(ex, "Exception occured trying to navigate to item {menuitem}", menuItem);
 			}
 		}
+
+		public ICommand BackRequestedCommand { get; }
+		public void BackRequested()
+		{
+			_navigator.NavigateBack();
+		}
+
+		public void Receive(UseBackNavigationChanged message)
+			=> IsBackNavigationEnabled = message.UseBackNavigation;
+		public void Dispose()
+			=> _messenger.UnregisterAll(this);
 	}
 }
