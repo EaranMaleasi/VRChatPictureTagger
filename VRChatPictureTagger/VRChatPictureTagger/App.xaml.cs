@@ -63,7 +63,9 @@ namespace VRChatPictureTagger
 			AppConfiguration.ValidateSettings(_appHost.Services);
 			AppConfiguration.ConfigureViews(_appHost.Services);
 
-			_logger = _appHost.Services.GetRequiredService<ILogger<App>>();
+			_appHost.Start();
+
+			_logger = _appHost.Services.GetService<ILogger<App>>();
 
 			var navViewModel = _appHost.Services.GetService<NavigationBaseViewModel>();
 
@@ -72,6 +74,8 @@ namespace VRChatPictureTagger
 
 			navView.RootWindow = MainWindow;
 			MainWindow.Activate();
+
+
 		}
 	}
 }

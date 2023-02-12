@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -24,32 +23,33 @@ namespace VRChatPictureTagger.Bootstrap
 	internal class AppConfiguration
 	{
 		internal static IHost BuildHost()
-			=> new HostBuilder()
-				.ConfigureAppConfiguration((context, configBuilder) =>
-				{
-					configBuilder.SetBasePath(context.HostingEnvironment.ContentRootPath);
-					configBuilder.AddJsonFile("appsettings.json", false, true);
-				})
+		{
+			IHost host = Host.CreateDefaultBuilder()
 				.ConfigureServices((context, services) =>
 				{
-					services.AddVRCPT_Services()
-							.AddVRCPT_Models()
-							.AddVRCPT_ViewModels()
-							.AddVRCPT_Views()
-							.AddVRCPT_Contexts()
-							.AddSingleton<IMessenger>(StrongReferenceMessenger.Default);
+					services.Configure<MainSettings>(context.Configuration.GetSection("MainSettings"));
 					services.Configure<WindowAndNavigationOptions>(x =>
 					{
 						x.MainWindow = App.MainWindow;
 						x.ContentFrame = App.ContentFrame;
 						x.UIDispatcher = App.UiDispatcherQueue;
 					});
+
+					services.AddVRCPT_Services()
+							.AddVRCPT_Models()
+							.AddVRCPT_ViewModels()
+							.AddVRCPT_Views()
+							.AddVRCPT_Contexts()
+							.AddSingleton<IMessenger>(StrongReferenceMessenger.Default);
 				})
 				.ConfigureLogging((context, logging) =>
 				{
-					logging.AddSerilog(new LoggerConfiguration().ReadFrom.Configuration(context.Configuration).CreateLogger());
+					logging.AddSerilog(new LoggerConfiguration().ReadFrom.Configuration(context.Configuration.GetSection("Serilog")).CreateLogger());
 				})
 				.Build();
+
+			return host;
+		}
 
 		internal static void ConfigureViews(IServiceProvider services)
 		{

@@ -41,7 +41,7 @@ namespace VRChatPictureTagger.Services
 			_options.Value.PictureSearchPaths = new() { Default.Paths.defaultVrcFolderPath };
 
 			_logger.LogInformation("Overwrite old settings");
-			_settingsService.SavePathSettings(_options.Value);
+			_settingsService.SaveMainSettings(_options.Value);
 		}
 	}
 }

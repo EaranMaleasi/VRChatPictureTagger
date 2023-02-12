@@ -2,18 +2,24 @@
     x:Class="VRChatPictureTagger.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="using:VRChatPictureTagger.Views.Behaviours"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:VRChatPictureTagger.Views"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
     <RelativePanel>
-        <ScrollViewer>
+        <ScrollViewer RelativePanel.Above="saveButton" RelativePanel.AlignTopWithPanel="True">
             <StackPanel Spacing="5">
                 <TextBlock Text="Picture search paths:" />
+
                 <ListBox
+                    x:Name="itemsListBox"
                     Height="300"
                     ItemsSource="{Binding SearchFolders}"
-                    SelectedItem="{Binding SelectedSearchPath}">
-                    <i:Interaction.Behaviors />
+                    SelectedItem="{Binding SelectedSearchPath, Mode=TwoWay}"
+                    SelectionMode="Extended">
+                    <i:Interaction.Behaviors>
+                        <b:SelectedItemsBehaviour ReadonlySelectedItems="{Binding SelectedItems, Mode=TwoWay}" />
+                    </i:Interaction.Behaviors>
                 </ListBox>
 
                 <RelativePanel>
@@ -25,7 +31,7 @@
                     <Button
                         MinWidth="160"
                         HorizontalAlignment="Stretch"
-                        Command="{Binding DeleteSearchPathCommand}"
+                        Command="{Binding RemoveSearchPathCommand}"
                         Content="Delete Path"
                         RelativePanel.AlignRightWithPanel="True" />
                 </RelativePanel>
@@ -46,8 +52,11 @@
             </StackPanel>
         </ScrollViewer>
         <Button
-            HorizontalAlignment="Stretch"
+            x:Name="saveButton"
+            MinWidth="400"
+            Command="{Binding SaveSettingsCommand}"
             Content="Save Settings"
-            RelativePanel.AlignBottomWithPanel="True" />
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignHorizontalCenterWithPanel="True" />
     </RelativePanel>
 </Page>

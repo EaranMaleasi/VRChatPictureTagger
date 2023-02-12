@@ -21,7 +21,7 @@ namespace VRChatPictureTagger.DbContexts.VRCX
 		{
 		}
 
-		public VrcxContext(DbContextOptions<VrcxContext> contextOptions, IOptions<MainSettings> pathOptions)
+		public VrcxContext(DbContextOptions<VrcxContext> contextOptions, IOptionsSnapshot<MainSettings> pathOptions)
 			: base(contextOptions)
 		{
 			DbPath = Default.Paths.defaultVrcxDbPath;

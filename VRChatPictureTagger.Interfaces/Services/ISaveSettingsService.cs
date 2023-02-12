@@ -6,6 +6,6 @@ namespace VRChatPictureTagger.Interfaces.Services
 {
 	public interface ISaveSettingsService
 	{
-		Task SavePathSettings(MainSettings newPathSettings);
+		Task SaveMainSettings(MainSettings newPathSettings);
 	}
 }

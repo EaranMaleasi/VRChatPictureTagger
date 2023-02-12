@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,7 +10,6 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using Microsoft.Extensions.Options;
 
-using VRChatPictureTagger.Core.Messages;
 using VRChatPictureTagger.Core.Settings;
 using VRChatPictureTagger.Core.Strings;
 using VRChatPictureTagger.Interfaces.Navigation;
@@ -23,24 +24,27 @@ namespace VRChatPictureTagger.ViewModels
 	{
 		public string FriendlyName => FriendlyNames.Settings;
 
-		private readonly IOptions<MainSettings> _settings;
+		private readonly IOptionsMonitor<MainSettings> _settings;
 		readonly ISaveSettingsService _saveSettings;
 		readonly IWindowHandleService _windowHandleService;
-		readonly IMessenger _messenger;
 		private bool _isBackNavigationEnabled;
 		private string _selectedSearchPath;
+		private int _selectedIndex;
+		private object _selectedValue;
+		private object _selectedValuePath;
+		private List<object> _selectedItems;
 
-		public SettingsViewModel(IOptions<MainSettings> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService, IMessenger messenger)
+		public SettingsViewModel(IOptionsMonitor<MainSettings> settings, ISaveSettingsService saveSettings, IWindowHandleService windowHandleService, IMessenger messenger)
 		{
 			_settings = settings;
 			_saveSettings = saveSettings;
 			_windowHandleService = windowHandleService;
-			_messenger = messenger;
-			SearchFolders = new ObservableCollection<string>(_settings.Value.PictureSearchPaths);
-			IsBackNavigationEnabled = _settings.Value.UseBackNavigation;
+			SearchFolders = new ObservableCollection<string>(_settings.CurrentValue.PictureSearchPaths);
+			IsBackNavigationEnabled = _settings.CurrentValue.UseBackNavigation;
 
 			AddSearchPathCommand = new RelayCommand(AddSearchPath);
 			RemoveSearchPathCommand = new RelayCommand(RemoveSearchPath);
+			SaveSettingsCommand = new RelayCommand(SaveSettings);
 		}
 
 		public ObservableCollection<string> SearchFolders { get; private set; }
@@ -51,24 +55,28 @@ namespace VRChatPictureTagger.ViewModels
 			set => SetProperty(ref _selectedSearchPath, value);
 		}
 
+		public List<object> SelectedItems
+		{
+			get => _selectedItems;
+			set => SetProperty(ref _selectedItems, value);
+		}
+
+
 		public bool IsBackNavigationEnabled
 		{
 			get => _isBackNavigationEnabled;
-			set
-			{
-				if (SetProperty(ref _isBackNavigationEnabled, value))
-					_messenger.Send(new UseBackNavigationChanged { UseBackNavigation = value });
-			}
+			set => SetProperty(ref _isBackNavigationEnabled, value);
 		}
 
 		public ICommand AddSearchPathCommand { get; set; }
 		public ICommand RemoveSearchPathCommand { get; set; }
+		public ICommand SaveSettingsCommand { get; }
 
 		public void RemoveSearchPath()
 		{
-			SearchFolders.Remove(_selectedSearchPath);
-			_settings.Value.PictureSearchPaths.Remove(_selectedSearchPath);
-			_messenger.Send<SettingsChangedMessage>();
+			foreach (var item in SelectedItems)
+				if (item is string path)
+					SearchFolders.Remove(path);
 		}
 
 		public async void AddSearchPath()
@@ -81,20 +89,31 @@ namespace VRChatPictureTagger.ViewModels
 			if (newFolder != null && !SearchFolders.Contains(newFolder.Path))
 			{
 				SearchFolders.Add(newFolder.Path);
-				_settings.Value.PictureSearchPaths.Add(newFolder.Path);
+				_settings.CurrentValue.PictureSearchPaths.Add(newFolder.Path);
 			}
 		}
 
-		public async void NavigatedFrom()
+		private async void SaveSettings()
 		{
-			await _saveSettings.SavePathSettings(_settings.Value);
+			MainSettings newSettings = new()
+			{
+				UseBackNavigation = IsBackNavigationEnabled,
+				PictureSearchPaths = SearchFolders.ToList()
+			};
+
+			await _saveSettings.SaveMainSettings(newSettings);
+		}
+
+		public void NavigatedFrom()
+		{
+
 
 		}
 
 		public void NavigatedTo()
 		{
 			SearchFolders.Clear();
-			foreach (var item in _settings.Value.PictureSearchPaths)
+			foreach (var item in _settings.CurrentValue.PictureSearchPaths)
 				SearchFolders.Add(item);
 		}
 	}
